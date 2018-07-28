@@ -1,0 +1,56 @@
+<template>
+  <div class="Menu">
+    <Item v-for="item in list" :key="item.key" :data="item"></Item>
+  </div>
+</template>
+
+<script>
+import Item from './Item.vue';
+import list from './list.js';
+export default {
+  components:{
+    Item
+  },
+  data(){
+    return {
+      list: list
+    }
+  }
+}
+</script>
+
+<style>
+  .menu-title,
+  .menu-item {
+    color: rgba(255, 255, 255, 0.65);
+    height: 40px;
+    line-height: 40px;
+    position: relative;
+    padding: 0 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .menu-title:hover,
+  .menu-item:hover {
+    color: white;
+  }
+
+  .menu-title::after {
+    content: "-";
+    position: absolute;
+    right: 0;
+    margin-right: 10px;
+  }
+
+  .menu-child {
+    display: none;
+    overflow-x: hidden;
+    background: #000c17;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,.45);
+  }
+
+  .menu-title.menu-hidden::after {
+      content: "+";
+  }
+</style>
