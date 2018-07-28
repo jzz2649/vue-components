@@ -1,8 +1,8 @@
 <template>
   <ul class="pagination">
     <li title="上一页" class="pagination-prev" @click="nextpage(-1)" :class="{'pagination-disabled':page===1}"><a>&lt;</a></li>
-    <li class="pagination-item" v-if="isJump(item)" v-for="item in list" :title="item" :key="item" @click="topage(item)" :class="{'pagination-item-active':item===page}"><a>{{item}}</a></li>
-    <li v-else-if="item==='prev'" :title="'向前'+p+'页'" :key="item" class="pagination-jump-prev"  @click="jumppage(-p)"><a></a></li>
+    <li class="pagination-item" v-if="isItem(item)" v-for="item in list" :title="item" :key="item" @click="topage(item)" :class="{'pagination-item-active':item===page}"><a>{{item}}</a></li>
+    <li v-else-if="isPrev(item)" :title="'向前'+p+'页'" :key="item" class="pagination-jump-prev"  @click="jumppage(-p)"><a></a></li>
     <li v-else :title="'向后'+p+'页'" :key="item" class="pagination-jump-next"  @click="jumppage(p)"><a></a></li>
     <li title="下一页" class="pagination-next" @click="nextpage(1)" :class="{'pagination-disabled':page>=total}"><a>&gt;</a></li>
   </ul>
@@ -70,8 +70,22 @@ export default {
       }
       this.nextpage(nextpage);
     },
-    isJump(item){
-      if(item === 'prev'||item === 'next'){
+    isPrev(item){
+      if(item === 'prev'){
+        return true;
+      }
+      return false;
+    },
+    isNext(item){
+      if(item ==='next'){
+        return true;
+      }
+      return false;
+    },
+    isItem(item){
+      const isPrev = this.isPrev(item);
+      const isNext = this.isNext(item);
+      if(isPrev||isNext){
         return false;
       }
       return true;
@@ -85,8 +99,7 @@ export default {
         fix = this.page + max > this.total ? this.total-this.page-max: fix;
       min += fix;
       max += fix;
-      let i = min;
-      for(;i<=max;i++){
+      for(let i = min;i<=max;i++){
         list.push(this.page+i);
       }
       const flist = list.filter(d=>{
@@ -94,23 +107,15 @@ export default {
           return true;
         }
       })
-      let len = flist.length-1;
+      const len = flist.length-1;
+      let newList = flist;
       if(len>0){
-        if(flist[0]-1>1){
-          flist.unshift('prev')
-          flist.unshift(1);
-        }else if(flist[0]-1>0){
-          flist.unshift(1);
-        }
-        len = flist.length-1;
-        if(this.total-flist[len]>1){
-          flist.push('next')
-          flist.push(this.total);
-        }else if(this.total-flist[len]>0){
-          flist.push(this.total);
-        }
+        const firstIndex = flist[0]-1;
+        const lastIndex = this.total-flist[len];
+        newList = [1,'prev'].slice(0,firstIndex).concat(newList);
+        newList = newList.concat([this.total,'next'].slice(0,lastIndex).reverse());
       }
-      this.list = flist;
+      this.list = newList;
     }
   }
 }
