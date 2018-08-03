@@ -1,4 +1,4 @@
-import { throttle } from '../utils'
+import { throttle } from "../utils";
 
 const delay = throttle((context,key,...v)=>{
   context.commit(key,...v);

@@ -6,27 +6,25 @@
 </template>
 
 <script>
-import { throttle } from '../utils'
-import { mapGetters } from 'vuex'
+import { delayMixin } from './mixin'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
+  mixins: [delayMixin],
   computed:{
     ...mapGetters([
       'introduce'
     ])
   },
-  created(){
-    this.delay = throttle((v)=>{
-      this.$store.commit('introduce',v);
-    })
-  },
   mounted(){
     this.$store.commit('introduce','这是一个简单的vue demo')
   },
   methods:{
+    ...mapMutations({updateState:'introduce'}),
     change(e){
       // this.$store.dispatch('introduce',e.target.value);
-      this.delay(e.target.value);
+      // this.rAFIimit((v)=>this.$store.commit('introduce',v),e.target.value);
+      this.rAFIimit((v)=>this.updateState(v),e.target.value);
     }
   }
 }
